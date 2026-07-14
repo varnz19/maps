@@ -27,20 +27,19 @@ const getDynamicTourStops = (stops: TourStop[]): TourStop[] => {
     return today >= firstDate && today <= lastDate;
   });
 
-  // 2. If no stop is happening today, find the last stop that occurred in the past
+  // 2. If no stop is happening today, find the next upcoming stop (in the future)
   if (currentIndex === -1) {
-    const pastStopsIndices: number[] = [];
-    stops.forEach((stop, idx) => {
+    currentIndex = stops.findIndex(stop => {
       const dates = stop.dates.map(d => new Date(d + 'T00:00:00'));
-      const lastDate = dates[dates.length - 1];
-      if (lastDate < today) {
-        pastStopsIndices.push(idx);
-      }
+      const firstDate = dates[0];
+      return firstDate > today;
     });
+  }
 
-    currentIndex = pastStopsIndices.length > 0 
-      ? pastStopsIndices[pastStopsIndices.length - 1] 
-      : 0;
+  // 3. If all stops have been completed (none happening today and none in the future),
+  // default to the last stop in the tour.
+  if (currentIndex === -1) {
+    currentIndex = stops.length - 1;
   }
 
   return stops.map((stop, idx) => {
