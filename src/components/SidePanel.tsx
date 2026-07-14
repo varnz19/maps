@@ -7,7 +7,8 @@ import {
   Plane,
   Navigation,
   Compass,
-  AlertCircle
+  AlertCircle,
+  Music
 } from 'lucide-react';
 import type { TourStop, WeatherInfo, CountryInfo, TimeInfo } from '../types/tour';
 import { fetchCountryDetails } from '../services/countries';
@@ -226,6 +227,31 @@ export const SidePanel: React.FC<SidePanelProps> = ({
                   </div>
                 </div>
               </div>
+
+              {/* Surprise Songs Panel */}
+              {stop.surpriseSongs && stop.surpriseSongs.length > 0 && (
+                <div className="bg-zinc-800/40 border border-zinc-800 rounded-xl p-4 sm:p-5">
+                  <div className="flex items-center gap-2 text-zinc-100 font-bold mb-3">
+                    <Music className="w-4.5 h-4.5 text-purple-500" />
+                    Surprise Songs
+                  </div>
+                  <div className="flex flex-col gap-2.5">
+                    {stop.surpriseSongs.map((song, i) => (
+                      <div
+                        key={i}
+                        className="flex items-center gap-2.5 bg-zinc-900/30 border border-zinc-800/60 rounded-lg p-3 hover:border-purple-500/20 transition-all duration-300 group"
+                      >
+                        <span className="text-[10px] uppercase font-bold text-purple-400 bg-purple-500/10 border border-purple-500/20 px-2 py-0.5 rounded">
+                          Song {i + 1}
+                        </span>
+                        <span className="text-xs font-bold text-zinc-200 group-hover:text-purple-300 transition-colors duration-200">
+                          {song}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Weather & Timezone Grid */}
               <div className="grid grid-cols-2 gap-4">

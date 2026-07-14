@@ -8,6 +8,7 @@ export interface TourStop {
   latitude: number;
   longitude: number;
   status: TourStatus;
+  surpriseSongs: string[];
 }
 
 export interface TourData {

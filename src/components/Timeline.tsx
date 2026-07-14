@@ -102,6 +102,15 @@ export const Timeline: React.FC<TimelineProps> = ({
                       {formatDateRange(stop.dates)}
                     </span>
                   </div>
+
+                  {stop.surpriseSongs && stop.surpriseSongs.length > 0 && (
+                    <div className="flex items-center gap-1.5 mt-1.5 text-[10px] text-zinc-400/80 truncate">
+                      <Music className="w-3.5 h-3.5 text-purple-400/80 shrink-0" />
+                      <span className="truncate">
+                        {stop.surpriseSongs.join(' • ')}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </motion.div>
             );
