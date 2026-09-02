@@ -1,5 +1,13 @@
 export type TourStatus = 'completed' | 'current' | 'upcoming';
 
+export interface TourHighlight {
+  night?: number;
+  date?: string;
+  title: string;
+  description?: string;
+  isHero?: boolean;
+}
+
 export interface TourStop {
   city: string;
   country: string;
@@ -8,13 +16,31 @@ export interface TourStop {
   latitude: number;
   longitude: number;
   status: TourStatus;
-  surpriseSongs: string[];
+  specialEvent?: string;
+  highlights?: TourHighlight[];
 }
 
 export interface TourData {
   artist: string;
   tourName: string;
   tourStops: TourStop[];
+}
+
+export type TravelMode = 'flight' | 'driving' | 'train';
+export type DistanceUnit = 'km' | 'mi';
+
+export interface UserTravelPreferences {
+  travelMode: TravelMode;
+  unit: DistanceUnit;
+}
+
+export interface TravelStats {
+  distance: number;
+  unitLabel: string;
+  durationMinutes: number;
+  formattedDuration: string;
+  co2Kg: number;
+  modeLabel: string;
 }
 
 export interface WeatherInfo {
@@ -36,3 +62,4 @@ export interface TimeInfo {
   offset: string;
   differenceMinutes: number;
 }
+

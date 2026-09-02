@@ -1,43 +1,42 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Compass, Menu, X, MapPin } from 'lucide-react';
+import { Menu, X, MapPin, Sparkles } from 'lucide-react';
 import tourDataRaw from './data/tourData.json';
-import type { TourData, TourStop } from './types/tour';
+import type { TourData, TourStop, UserTravelPreferences } from './types/tour';
 import { MapContainer } from './components/MapContainer';
 import { Timeline } from './components/Timeline';
 import { NextStopCard } from './components/NextStopCard';
 import { SidePanel } from './components/SidePanel';
-import { getUserLocation } from './services/location';
+import {
+  getUserLocation,
+  getSavedTravelPrefs,
+  saveSavedTravelPrefs,
+  saveSavedLocation,
+} from './services/location';
 import type { UserLocation } from './services/location';
 import { LocationControl } from './components/LocationControl';
 
-// Cast raw JSON to typescript TourData structure safely
 const tourData: TourData = tourDataRaw as TourData;
 
-// Calculate stop status dynamically based on current local date
 const getDynamicTourStops = (stops: TourStop[]): TourStop[] => {
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-  // 1. Check if there's a stop happening today
-  let currentIndex = stops.findIndex(stop => {
-    const dates = stop.dates.map(d => new Date(d + 'T00:00:00'));
+  let currentIndex = stops.findIndex((stop) => {
+    const dates = stop.dates.map((d) => new Date(d + 'T00:00:00'));
     const firstDate = dates[0];
     const lastDate = dates[dates.length - 1];
     return today >= firstDate && today <= lastDate;
   });
 
-  // 2. If no stop is happening today, find the next upcoming stop (in the future)
   if (currentIndex === -1) {
-    currentIndex = stops.findIndex(stop => {
-      const dates = stop.dates.map(d => new Date(d + 'T00:00:00'));
+    currentIndex = stops.findIndex((stop) => {
+      const dates = stop.dates.map((d) => new Date(d + 'T00:00:00'));
       const firstDate = dates[0];
       return firstDate > today;
     });
   }
 
-  // 3. If all stops have been completed (none happening today and none in the future),
-  // default to the last stop in the tour.
   if (currentIndex === -1) {
     currentIndex = stops.length - 1;
   }
@@ -60,30 +59,29 @@ const tourStops = getDynamicTourStops(tourData.tourStops);
 function App() {
   const [selectedStop, setSelectedStop] = useState<TourStop | null>(null);
   const [userLocation, setUserLocation] = useState<UserLocation | null>(null);
+  const [userPrefs, setUserPrefs] = useState<UserTravelPreferences>(() =>
+    getSavedTravelPrefs()
+  );
   const [timelineOpen, setTimelineOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
   const [locationModalOpen, setLocationModalOpen] = useState(false);
 
-  // Monitor resize to toggle responsive states
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 1024;
       setIsMobile(mobile);
       if (mobile) {
-        setTimelineOpen(false); // Close timeline by default on mobile to prioritize map
+        setTimelineOpen(false);
       } else {
         setTimelineOpen(true);
       }
     };
 
     window.addEventListener('resize', handleResize);
-    // Trigger once on mount
     handleResize();
-
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Request user geolocation on mount
   useEffect(() => {
     const getPosition = async () => {
       const position = await getUserLocation();
@@ -92,35 +90,42 @@ function App() {
     getPosition();
   }, []);
 
-  // Automatically select the 'current' stop on load to spotlight where the artist is performing
   useEffect(() => {
     const current = tourStops.find((stop) => stop.status === 'current');
     if (current) {
-      // Delay slightly for smooth map initialization load
       const timer = setTimeout(() => {
         setSelectedStop(current);
-      }, 1000);
+      }, 800);
       return () => clearTimeout(timer);
     }
   }, []);
 
+  const handlePrefsChange = (newPrefs: UserTravelPreferences) => {
+    setUserPrefs(newPrefs);
+    saveSavedTravelPrefs(newPrefs);
+  };
+
+  const handleLocationChange = (loc: UserLocation) => {
+    setUserLocation(loc);
+    saveSavedLocation(loc);
+  };
+
   return (
-    <div className="relative w-screen h-screen bg-zinc-900 text-zinc-100 flex overflow-hidden font-sans">
+    <div className="relative w-screen h-screen bg-zinc-950 text-zinc-100 flex overflow-hidden font-sans">
       {/* 1. Collapsible Timeline Sidebar */}
       <AnimatePresence initial={false}>
         {timelineOpen && (
           <motion.div
             initial={{ width: 0, opacity: 0 }}
-            animate={{ width: isMobile ? '100%' : '350px', opacity: 1 }}
+            animate={{ width: isMobile ? '100%' : '360px', opacity: 1 }}
             exit={{ width: 0, opacity: 0 }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
             className={`h-full shrink-0 z-30 ${isMobile ? 'absolute inset-0' : 'relative'}`}
           >
-            {/* Close button for full screen mobile timeline */}
             {isMobile && (
               <button
                 onClick={() => setTimelineOpen(false)}
-                className="absolute top-6 right-6 p-2 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400 z-50"
+                className="absolute top-5 right-5 p-2 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400 z-50 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -130,75 +135,72 @@ function App() {
               selectedStop={selectedStop}
               onStopSelect={(stop) => {
                 setSelectedStop(stop);
-                if (isMobile) setTimelineOpen(false); // Hide timeline on mobile selection to reveal map
+                if (isMobile) setTimelineOpen(false);
               }}
             />
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* 2. Main Map Showcase Workspace */}
+      {/* 2. Main Map Workspace */}
       <div className="flex-1 h-full relative flex flex-col">
-        {/* Top Navbar */}
-        <header className="absolute top-6 right-6 left-6 z-20 flex justify-between items-center pointer-events-none">
-          {/* Timeline and Location toggle buttons */}
+        {/* Top Navbar Header */}
+        <header className="absolute top-5 right-6 left-6 z-20 flex justify-between items-center pointer-events-none">
+          {/* Action Buttons */}
           <div className="pointer-events-auto flex gap-3">
             <button
               onClick={() => setTimelineOpen(!timelineOpen)}
-              className="p-3 bg-zinc-900/90 border border-zinc-800 rounded-xl shadow-lg text-zinc-300 hover:text-zinc-100 hover:border-purple-500/40 transition-all duration-300 backdrop-filter backdrop-blur-md flex items-center justify-center cursor-pointer"
-              title="Toggle Timeline"
+              className="p-3 bg-zinc-950/90 border border-purple-500/30 rounded-2xl shadow-xl text-zinc-200 hover:text-white hover:border-purple-400 transition-all backdrop-blur-xl flex items-center justify-center cursor-pointer hover:scale-105"
+              title="Toggle Tour Route"
             >
               {timelineOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
             <button
               onClick={() => setLocationModalOpen(!locationModalOpen)}
-              className={`p-3 bg-zinc-900/90 border rounded-xl shadow-lg hover:text-zinc-100 transition-all duration-300 backdrop-filter backdrop-blur-md flex items-center justify-center cursor-pointer ${
-                locationModalOpen
-                  ? 'border-purple-500 text-purple-400 shadow-purple-500/10'
-                  : 'border-zinc-800 text-zinc-300 hover:border-purple-500/40'
-              }`}
-              title="Configure My Location"
+              className={`p-3 bg-zinc-950/90 border rounded-2xl shadow-xl hover:text-white transition-all backdrop-blur-xl flex items-center justify-center cursor-pointer hover:scale-105 ${locationModalOpen
+                  ? 'border-purple-500 text-purple-300 shadow-purple-950/50'
+                  : 'border-zinc-800 text-zinc-300 hover:border-purple-400'
+                }`}
+              title="Configure My Location & Travel Settings"
             >
-              <MapPin className="w-5 h-5" />
+              <MapPin className="w-5 h-5 text-purple-400" />
             </button>
           </div>
 
-          {/* Logo Brand Card */}
-          <div className="bg-zinc-900/90 border border-zinc-800 px-5 py-3 rounded-xl shadow-lg backdrop-filter backdrop-blur-md flex items-center gap-3 pointer-events-auto select-none border-l-purple-400 border-l-2">
-            <Compass className="w-5 h-5 text-purple-500 animate-spin-slow" />
+          {/* BTS Brand Badge */}
+          <div className="bg-zinc-950/90 border border-purple-500/30 px-4 py-2.5 rounded-2xl shadow-xl backdrop-blur-xl flex items-center gap-3 pointer-events-auto select-none border-l-purple-500 border-l-4">
+            <div className="w-8 h-8 rounded-xl bg-purple-500/20 border border-purple-500/40 flex items-center justify-center">
+              <Sparkles className="w-4 h-4 text-purple-400 animate-spin-slow" />
+            </div>
             <div>
-              <h1 className="text-sm font-black tracking-wider uppercase bg-gradient-to-r from-zinc-100 to-purple-400 bg-clip-text text-transparent">
-                tourVerse
+              <h1 className="text-sm font-black tracking-wider uppercase bg-gradient-to-r from-zinc-100 via-purple-300 to-purple-400 bg-clip-text text-transparent">
+                TourVerse
               </h1>
-              <p className="text-[9px] text-zinc-400 font-bold uppercase tracking-widest mt-0.5">
+              <p className="text-[9px] text-purple-300/80 font-extrabold uppercase tracking-widest mt-0.5">
                 {tourData.artist} • {tourData.tourName}
               </p>
             </div>
           </div>
         </header>
 
-        {/* Location Selector Panel Overlay */}
+        {/* Location & Travel Modal */}
         <LocationControl
           isOpen={locationModalOpen}
           onClose={() => setLocationModalOpen(false)}
           currentLocation={userLocation}
-          onLocationChange={(loc) => {
-            setUserLocation(loc);
-            setLocationModalOpen(false);
-          }}
+          onLocationChange={handleLocationChange}
+          userPrefs={userPrefs}
+          onPrefsChange={handlePrefsChange}
         />
 
-        {/* Floating Next Stop Info Card */}
-        <div className="pointer-events-none absolute inset-0 z-10">
-          <div className="pointer-events-auto max-w-sm">
-            <NextStopCard
-              stops={tourStops}
-              onStopSelect={(stop) => setSelectedStop(stop)}
-            />
-          </div>
-        </div>
+        {/* Next Stop Floating HUD Card */}
+        <NextStopCard
+          stops={tourStops}
+          userPrefs={userPrefs}
+          onStopSelect={(stop) => setSelectedStop(stop)}
+        />
 
-        {/* Map Visualization Layer */}
+        {/* Map Visualization */}
         <div className="w-full h-full relative z-0">
           <MapContainer
             stops={tourStops}
@@ -208,10 +210,12 @@ function App() {
           />
         </div>
 
-        {/* Interactive Side Panel / Bottom Sheet */}
+        {/* Side Panel Details */}
         <SidePanel
           stop={selectedStop}
           userLocation={userLocation}
+          userPrefs={userPrefs}
+          onPrefsChange={handlePrefsChange}
           onClose={() => setSelectedStop(null)}
         />
       </div>

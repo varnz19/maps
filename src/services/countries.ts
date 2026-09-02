@@ -52,6 +52,78 @@ const COUNTRY_FALLBACKS: Record<string, CountryInfo> = {
     currencies: ['Australian Dollar ($)'],
     flag: 'https://flagcdn.com/w320/au.png',
   },
+  'colombia': {
+    name: 'Colombia',
+    languages: ['Spanish'],
+    currencies: ['Colombian Peso ($)'],
+    flag: 'https://flagcdn.com/w320/co.png',
+  },
+  'peru': {
+    name: 'Peru',
+    languages: ['Spanish', 'Quechua', 'Aymara'],
+    currencies: ['Peruvian Sol (S/.)'],
+    flag: 'https://flagcdn.com/w320/pe.png',
+  },
+  'chile': {
+    name: 'Chile',
+    languages: ['Spanish'],
+    currencies: ['Chilean Peso ($)'],
+    flag: 'https://flagcdn.com/w320/cl.png',
+  },
+  'argentina': {
+    name: 'Argentina',
+    languages: ['Spanish'],
+    currencies: ['Argentine Peso ($)'],
+    flag: 'https://flagcdn.com/w320/ar.png',
+  },
+  'brazil': {
+    name: 'Brazil',
+    languages: ['Portuguese'],
+    currencies: ['Brazilian Real (R$)'],
+    flag: 'https://flagcdn.com/w320/br.png',
+  },
+  'taiwan': {
+    name: 'Taiwan',
+    languages: ['Mandarin Chinese'],
+    currencies: ['New Taiwan Dollar (NT$)'],
+    flag: 'https://flagcdn.com/w320/tw.png',
+  },
+  'thailand': {
+    name: 'Thailand',
+    languages: ['Thai'],
+    currencies: ['Thai Baht (฿)'],
+    flag: 'https://flagcdn.com/w320/th.png',
+  },
+  'malaysia': {
+    name: 'Malaysia',
+    languages: ['Malaysian Malay', 'English'],
+    currencies: ['Malaysian Ringgit (RM)'],
+    flag: 'https://flagcdn.com/w320/my.png',
+  },
+  'singapore': {
+    name: 'Singapore',
+    languages: ['English', 'Malay', 'Mandarin', 'Tamil'],
+    currencies: ['Singapore Dollar ($)'],
+    flag: 'https://flagcdn.com/w320/sg.png',
+  },
+  'indonesia': {
+    name: 'Indonesia',
+    languages: ['Indonesian'],
+    currencies: ['Indonesian Rupiah (Rp)'],
+    flag: 'https://flagcdn.com/w320/id.png',
+  },
+  'hong kong': {
+    name: 'Hong Kong',
+    languages: ['Cantonese', 'English', 'Mandarin'],
+    currencies: ['Hong Kong Dollar ($)'],
+    flag: 'https://flagcdn.com/w320/hk.png',
+  },
+  'philippines': {
+    name: 'Philippines',
+    languages: ['Filipino', 'English'],
+    currencies: ['Philippine Peso (₱)'],
+    flag: 'https://flagcdn.com/w320/ph.png',
+  },
 };
 
 export async function fetchCountryDetails(countryName: string): Promise<CountryInfo> {

@@ -1,6 +1,6 @@
 {
   "artist": "BTS",
-  "tourName": "ARIRANG World Tour",
+  "tourName": "ARIRANG 2026-2027 World Tour",
   "tourStops": [
     {
       "city": "Goyang",
@@ -10,7 +10,11 @@
       "latitude": 37.6748,
       "longitude": 126.7482,
       "status": "completed",
-      "surpriseSongs": ["Born Singer", "Spring Day"]
+      "specialEvent": "World Tour Opening Concert",
+      "highlights": [
+        { "night": 1, "date": "2026-04-09", "title": "World Tour Opening Night", "isHero": true },
+        { "night": 3, "date": "2026-04-12", "title": "Korea Leg Finale" }
+      ]
     },
     {
       "city": "Tokyo",
@@ -20,7 +24,7 @@
       "latitude": 35.7056,
       "longitude": 139.7519,
       "status": "completed",
-      "surpriseSongs": ["For You", "Crystal Snow"]
+      "specialEvent": "Japan Dome Tour"
     },
     {
       "city": "Tampa",
@@ -30,7 +34,10 @@
       "latitude": 27.9759,
       "longitude": -82.5033,
       "status": "completed",
-      "surpriseSongs": ["Mikrokosmos", "Home"]
+      "specialEvent": "US Leg 1 Kickoff",
+      "highlights": [
+        { "night": 1, "date": "2026-04-25", "title": "North American Stadium Tour Premiere", "isHero": true }
+      ]
     },
     {
       "city": "El Paso",
@@ -39,8 +46,7 @@
       "dates": ["2026-05-02", "2026-05-03"],
       "latitude": 31.7731,
       "longitude": -106.5083,
-      "status": "completed",
-      "surpriseSongs": ["Pied Piper", "Dimple"]
+      "status": "completed"
     },
     {
       "city": "Mexico City",
@@ -50,7 +56,7 @@
       "latitude": 19.3029,
       "longitude": -99.1505,
       "status": "completed",
-      "surpriseSongs": ["Anpanman", "Airplane pt.2"]
+      "specialEvent": "Estadio Azteca Stadium Special"
     },
     {
       "city": "Stanford",
@@ -59,8 +65,7 @@
       "dates": ["2026-05-16", "2026-05-17"],
       "latitude": 37.4346,
       "longitude": -122.1611,
-      "status": "completed",
-      "surpriseSongs": ["Make It Right", "Magic Shop"]
+      "status": "completed"
     },
     {
       "city": "Las Vegas",
@@ -70,7 +75,7 @@
       "latitude": 36.0909,
       "longitude": -115.1833,
       "status": "completed",
-      "surpriseSongs": ["Butter (Holiday Remix)", "Permission to Dance"]
+      "specialEvent": "Allegiant Stadium Residency"
     },
     {
       "city": "Busan",
@@ -80,7 +85,11 @@
       "latitude": 35.1901,
       "longitude": 129.0848,
       "status": "completed",
-      "surpriseSongs": ["Ma City", "Yet to Come"]
+      "specialEvent": "13th Debut Anniversary FESTA",
+      "highlights": [
+        { "night": 1, "date": "2026-06-12", "title": "Hometown Busan Stadium Celebration" },
+        { "night": 2, "date": "2026-06-13", "title": "13th Debut Anniversary FESTA Concert", "isHero": true }
+      ]
     },
     {
       "city": "London",
@@ -89,8 +98,11 @@
       "dates": ["2026-07-06", "2026-07-07"],
       "latitude": 51.6043,
       "longitude": -0.0664,
-      "status": "current",
-      "surpriseSongs": ["Young Forever", "Epiphany"]
+      "status": "completed",
+      "specialEvent": "Europe Tour Kickoff",
+      "highlights": [
+        { "night": 1, "date": "2026-07-06", "title": "European Stadium Tour Premiere", "isHero": true }
+      ]
     },
     {
       "city": "Munich",
@@ -99,8 +111,7 @@
       "dates": ["2026-07-11", "2026-07-12"],
       "latitude": 48.2188,
       "longitude": 11.6247,
-      "status": "upcoming",
-      "surpriseSongs": ["Run BTS", "Telepathy"]
+      "status": "completed"
     },
     {
       "city": "Paris",
@@ -109,8 +120,11 @@
       "dates": ["2026-07-17", "2026-07-18"],
       "latitude": 48.9244,
       "longitude": 2.3601,
-      "status": "upcoming",
-      "surpriseSongs": ["Louder than bombs", "We are Bulletproof: the Eternal"]
+      "status": "completed",
+      "specialEvent": "Europe Tour Finale",
+      "highlights": [
+        { "night": 2, "date": "2026-07-18", "title": "Stade de France European Tour Finale", "isHero": true }
+      ]
     },
     {
       "city": "East Rutherford",
@@ -119,8 +133,11 @@
       "dates": ["2026-08-01", "2026-08-02"],
       "latitude": 40.8135,
       "longitude": -74.0743,
-      "status": "upcoming",
-      "surpriseSongs": ["Paradise", "Love Maze"]
+      "status": "completed",
+      "specialEvent": "US Leg 2 Kickoff",
+      "highlights": [
+        { "night": 1, "date": "2026-08-01", "title": "MetLife Stadium Leg 2 Premiere", "isHero": true }
+      ]
     },
     {
       "city": "Foxborough",
@@ -129,8 +146,7 @@
       "dates": ["2026-08-05", "2026-08-06"],
       "latitude": 42.0909,
       "longitude": -71.2643,
-      "status": "upcoming",
-      "surpriseSongs": ["Heartbeat", "Lights"]
+      "status": "completed"
     },
     {
       "city": "Baltimore",
@@ -139,8 +155,7 @@
       "dates": ["2026-08-10", "2026-08-11"],
       "latitude": 39.2780,
       "longitude": -76.6227,
-      "status": "upcoming",
-      "surpriseSongs": ["Autumn Leaves", "Sea"]
+      "status": "completed"
     },
     {
       "city": "Arlington",
@@ -149,8 +164,7 @@
       "dates": ["2026-08-15", "2026-08-16"],
       "latitude": 32.7473,
       "longitude": -97.0945,
-      "status": "upcoming",
-      "surpriseSongs": ["Trivia 轉: Seesaw", "Trivia 承: Love"]
+      "status": "completed"
     },
     {
       "city": "Toronto",
@@ -159,8 +173,8 @@
       "dates": ["2026-08-22", "2026-08-23"],
       "latitude": 43.6414,
       "longitude": -79.3894,
-      "status": "upcoming",
-      "surpriseSongs": ["Answer: Love Myself", "Epilogue: Young Forever"]
+      "status": "completed",
+      "specialEvent": "Canada Stadium Special"
     },
     {
       "city": "Chicago",
@@ -169,8 +183,8 @@
       "dates": ["2026-08-27", "2026-08-28"],
       "latitude": 41.8623,
       "longitude": -87.6167,
-      "status": "upcoming",
-      "surpriseSongs": ["Best of Me", "Spring Day"]
+      "status": "completed",
+      "specialEvent": "Midwest Historic Finale"
     },
     {
       "city": "Los Angeles",
@@ -180,17 +194,176 @@
       "latitude": 33.9534,
       "longitude": -118.3387,
       "status": "upcoming",
-      "surpriseSongs": ["Born Singer", "Yet to Come"]
+      "specialEvent": "🎂 Jungkook Birthday Show & US Leg Finale",
+      "highlights": [
+        { "night": 1, "date": "2026-09-01", "title": "🎂 Jungkook Birthday Special", "isHero": true },
+        { "night": 2, "date": "2026-09-02", "title": "SoFi Stadium Night 2" },
+        { "night": 3, "date": "2026-09-05", "title": "Solo Stage Showcases" },
+        { "night": 4, "date": "2026-09-06", "title": "US Leg Finale & Farewell Show" }
+      ]
+    },
+    {
+      "city": "Bogota",
+      "country": "Colombia",
+      "venue": "Estadio El Campín",
+      "dates": ["2026-10-02", "2026-10-03"],
+      "latitude": 4.6459,
+      "longitude": -74.0776,
+      "status": "upcoming",
+      "specialEvent": "Latin America Tour Kickoff",
+      "highlights": [
+        { "night": 1, "date": "2026-10-02", "title": "Latin America Tour Opening Night", "isHero": true }
+      ]
+    },
+    {
+      "city": "Lima",
+      "country": "Peru",
+      "venue": "Estadio San Marcos",
+      "dates": ["2026-10-07", "2026-10-09", "2026-10-10"],
+      "latitude": -12.0569,
+      "longitude": -77.0844,
+      "status": "upcoming"
+    },
+    {
+      "city": "Santiago",
+      "country": "Chile",
+      "venue": "Estadio Nacional",
+      "dates": ["2026-10-14", "2026-10-16", "2026-10-17"],
+      "latitude": -33.4644,
+      "longitude": -70.6106,
+      "status": "upcoming"
+    },
+    {
+      "city": "Buenos Aires",
+      "country": "Argentina",
+      "venue": "Estadio Único de La Plata",
+      "dates": ["2026-10-21", "2026-10-23", "2026-10-24"],
+      "latitude": -34.9142,
+      "longitude": -57.9897,
+      "status": "upcoming",
+      "specialEvent": "The Astronaut Return Stage",
+      "highlights": [
+        { "night": 1, "date": "2026-10-21", "title": "The Astronaut Argentina Return", "isHero": true }
+      ]
+    },
+    {
+      "city": "São Paulo",
+      "country": "Brazil",
+      "venue": "Estádio do MorumBIS",
+      "dates": ["2026-10-28", "2026-10-30", "2026-10-31"],
+      "latitude": -23.6001,
+      "longitude": -46.7202,
+      "status": "upcoming",
+      "specialEvent": "Latin America Tour Finale",
+      "highlights": [
+        { "night": 1, "date": "2026-10-28", "title": "MorumBIS Opening Night" },
+        { "night": 3, "date": "2026-10-31", "title": "Latin America Tour Finale", "isHero": true }
+      ]
     },
     {
       "city": "Kaohsiung",
       "country": "Taiwan",
       "venue": "Kaohsiung National Stadium",
-      "dates": ["2026-11-19", "2026-11-21"],
+      "dates": ["2026-11-19", "2026-11-21", "2026-11-22"],
       "latitude": 22.7022,
       "longitude": 120.2946,
       "status": "upcoming",
-      "surpriseSongs": ["Coffee", "Like"]
+      "specialEvent": "Asia Tour Kickoff",
+      "highlights": [
+        { "night": 1, "date": "2026-11-19", "title": "Asia Stadium Leg Premiere", "isHero": true }
+      ]
+    },
+    {
+      "city": "Bangkok",
+      "country": "Thailand",
+      "venue": "Rajamangala National Stadium",
+      "dates": ["2026-12-03", "2026-12-05", "2026-12-06"],
+      "latitude": 13.7553,
+      "longitude": 100.6224,
+      "status": "upcoming"
+    },
+    {
+      "city": "Kuala Lumpur",
+      "country": "Malaysia",
+      "venue": "TM Stadium Nasional",
+      "dates": ["2026-12-12", "2026-12-13"],
+      "latitude": 3.0547,
+      "longitude": 101.6917,
+      "status": "upcoming"
+    },
+    {
+      "city": "Singapore",
+      "country": "Singapore",
+      "venue": "National Stadium",
+      "dates": ["2026-12-17", "2026-12-19", "2026-12-20", "2026-12-22"],
+      "latitude": 1.3033,
+      "longitude": 103.8744,
+      "status": "upcoming",
+      "specialEvent": "Singapore Residency",
+      "highlights": [
+        { "night": 4, "date": "2026-12-22", "title": "Singapore Residency Finale", "isHero": true }
+      ]
+    },
+    {
+      "city": "Jakarta",
+      "country": "Indonesia",
+      "venue": "Gelora Bung Karno Main Stadium",
+      "dates": ["2026-12-26", "2026-12-27", "2026-12-29"],
+      "latitude": -6.2186,
+      "longitude": 106.8018,
+      "status": "upcoming",
+      "specialEvent": "Year-End Concert Series",
+      "highlights": [
+        { "night": 3, "date": "2026-12-29", "title": "2026 Year-End Finale Show", "isHero": true }
+      ]
+    },
+    {
+      "city": "Melbourne",
+      "country": "Australia",
+      "venue": "Marvel Stadium",
+      "dates": ["2027-02-10", "2027-02-12", "2027-02-13"],
+      "latitude": -37.8165,
+      "longitude": 144.9475,
+      "status": "upcoming",
+      "specialEvent": "Oceania Tour Kickoff",
+      "highlights": [
+        { "night": 1, "date": "2027-02-10", "title": "Oceania Tour Premiere", "isHero": true }
+      ]
+    },
+    {
+      "city": "Sydney",
+      "country": "Australia",
+      "venue": "Accor Stadium",
+      "dates": ["2027-02-20", "2027-02-21"],
+      "latitude": -33.8472,
+      "longitude": 151.0634,
+      "status": "upcoming",
+      "specialEvent": "Australia Leg Finale",
+      "highlights": [
+        { "night": 2, "date": "2027-02-21", "title": "Australia Stadium Tour Finale", "isHero": true }
+      ]
+    },
+    {
+      "city": "Hong Kong",
+      "country": "Hong Kong",
+      "venue": "Kai Tak Stadium",
+      "dates": ["2027-03-04", "2027-03-06", "2027-03-07"],
+      "latitude": 22.3228,
+      "longitude": 114.1972,
+      "status": "upcoming"
+    },
+    {
+      "city": "Bulacan",
+      "country": "Philippines",
+      "venue": "Philippine Sports Stadium",
+      "dates": ["2027-03-13", "2027-03-14", "2027-03-16"],
+      "latitude": 14.7958,
+      "longitude": 120.9525,
+      "status": "upcoming",
+      "specialEvent": "World Tour Grand Finale",
+      "highlights": [
+        { "night": 3, "date": "2027-03-16", "title": "ARIRANG 2026-2027 World Tour Grand Finale", "isHero": true }
+      ]
     }
   ]
 }

@@ -1,5 +1,6 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import maplibregl from 'maplibre-gl';
+import { Info } from 'lucide-react';
 import type { TourStop } from '../types/tour';
 import { getGeodesicPath } from '../utils/geo';
 import type { UserLocation } from '../services/location';
@@ -17,6 +18,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
   userLocation,
   onStopSelect,
 }) => {
+  const [showLegend, setShowLegend] = useState(false);
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const markersRef = useRef<maplibregl.Marker[]>([]);
@@ -24,8 +26,6 @@ export const MapContainer: React.FC<MapContainerProps> = ({
 
   useEffect(() => {
     if (!mapContainerRef.current) return;
-
-    let flowAnimFrameId: number;
 
     // Initialize MapLibre GL
     const map = new maplibregl.Map({
@@ -46,7 +46,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
 
       // 1. Draw Tour Routes (Geodesic Arcs & Anti-meridian support)
       const currentIndex = stops.findIndex((stop) => stop.status === 'current');
-      
+
       let combinedPath: [number, number][] = [];
       const segmentIndices: number[] = [0];
 
@@ -72,59 +72,93 @@ export const MapContainer: React.FC<MapContainerProps> = ({
         segmentIndices.push(combinedPath.length - 1);
       }
 
-      // Calculate completed vs future sections
-      // Completed route spans from first stop to current stop
-      const completedSplitIndex = currentIndex !== -1 ? segmentIndices[currentIndex] : combinedPath.length - 1;
-      const completedCoords = combinedPath.slice(0, completedSplitIndex + 1);
-      const futureCoords = currentIndex !== -1 ? combinedPath.slice(completedSplitIndex) : [];
+      // Partition coordinates: Completed vs Active Next Leg vs Remaining Future Legs
+      const currentSplitIdx = currentIndex !== -1 ? segmentIndices[currentIndex] : combinedPath.length - 1;
+      const nextSplitIdx = currentIndex !== -1 && currentIndex + 1 < segmentIndices.length
+        ? segmentIndices[currentIndex + 1]
+        : currentSplitIdx;
 
-      // Add source for completed route
-      map.addSource('completed-route', {
-        type: 'geojson',
-        data: {
-          type: 'Feature',
-          properties: {},
-          geometry: {
-            type: 'LineString',
-            coordinates: completedCoords.slice(0, 1), // Start drawing from the first point
+      const completedCoords = combinedPath.slice(0, currentSplitIdx + 1);
+      const activeUpcomingCoords = combinedPath.slice(currentSplitIdx, nextSplitIdx + 1);
+      const remainingFutureCoords = combinedPath.slice(nextSplitIdx);
+
+      // 1. Completed Route: Desaturated, dimmed gray line with low opacity
+      if (completedCoords.length > 1) {
+        map.addSource('completed-route', {
+          type: 'geojson',
+          data: {
+            type: 'Feature',
+            properties: {},
+            geometry: {
+              type: 'LineString',
+              coordinates: completedCoords,
+            },
           },
-        },
-      });
+        });
 
-      // Add solid background completed line (faded purple) - lighter pastel purple
-      map.addLayer({
-        id: 'completed-route-base-layer',
-        type: 'line',
-        source: 'completed-route',
-        layout: {
-          'line-join': 'round',
-          'line-cap': 'round',
-        },
-        paint: {
-          'line-color': '#c084fc', // Lighter purple
-          'line-width': 4,
-          'line-opacity': 0.5,
-        },
-      });
+        map.addLayer({
+          id: 'completed-route-layer',
+          type: 'line',
+          source: 'completed-route',
+          layout: {
+            'line-join': 'round',
+            'line-cap': 'round',
+          },
+          paint: {
+            'line-color': '#64748b',
+            'line-width': 1.5,
+            'line-opacity': 0.25,
+          },
+        });
+      }
 
-      // Add bright animated glow completed line (flowing overlay) - lighter lilac/white
-      map.addLayer({
-        id: 'completed-route-layer',
-        type: 'line',
-        source: 'completed-route',
-        layout: {
-          'line-join': 'round',
-          'line-cap': 'round',
-        },
-        paint: {
-          'line-color': '#f3e8ff', // Lighter lilac/white
-          'line-width': 2.5,
-          'line-opacity': 0.95,
-        },
-      });
+      // 2. Active Upcoming Leg (Current City -> Next City): Bright Purple Accent & Glowing
+      if (activeUpcomingCoords.length > 1) {
+        map.addSource('active-upcoming-route', {
+          type: 'geojson',
+          data: {
+            type: 'Feature',
+            properties: {},
+            geometry: {
+              type: 'LineString',
+              coordinates: activeUpcomingCoords,
+            },
+          },
+        });
 
-      // Add source & layer for future route - lighter slate gray
-      if (futureCoords.length > 1) {
+        map.addLayer({
+          id: 'active-upcoming-route-glow',
+          type: 'line',
+          source: 'active-upcoming-route',
+          layout: {
+            'line-join': 'round',
+            'line-cap': 'round',
+          },
+          paint: {
+            'line-color': '#a855f7',
+            'line-width': 4,
+            'line-opacity': 0.7,
+          },
+        });
+
+        map.addLayer({
+          id: 'active-upcoming-route-core',
+          type: 'line',
+          source: 'active-upcoming-route',
+          layout: {
+            'line-join': 'round',
+            'line-cap': 'round',
+          },
+          paint: {
+            'line-color': '#f3e8ff',
+            'line-width': 2.5,
+            'line-opacity': 0.95,
+          },
+        });
+      }
+
+      // 3. Remaining Future Route: Subtle dashed lines
+      if (remainingFutureCoords.length > 1) {
         map.addSource('future-route', {
           type: 'geojson',
           data: {
@@ -132,7 +166,7 @@ export const MapContainer: React.FC<MapContainerProps> = ({
             properties: {},
             geometry: {
               type: 'LineString',
-              coordinates: futureCoords,
+              coordinates: remainingFutureCoords,
             },
           },
         });
@@ -146,102 +180,46 @@ export const MapContainer: React.FC<MapContainerProps> = ({
             'line-cap': 'round',
           },
           paint: {
-            'line-color': '#cbd5e1', // Lighter slate gray
-            'line-width': 2,
-            'line-opacity': 0.4,
-            'line-dasharray': [3, 3],
+            'line-color': '#475569',
+            'line-width': 1.5,
+            'line-opacity': 0.2,
+            'line-dasharray': [3, 4],
           },
         });
       }
-
-      // Animate line drawing on map load
-      let currentStep = 0;
-      const totalSteps = completedCoords.length;
-      const animationSpeed = 2; // Add 2 points per frame
-
-      function animateLineDraw() {
-        if (!mapRef.current) return;
-
-        if (currentStep < totalSteps) {
-          currentStep = Math.min(currentStep + animationSpeed, totalSteps);
-          const currentCoords = completedCoords.slice(0, currentStep);
-
-          const source = map.getSource('completed-route') as maplibregl.GeoJSONSource;
-          if (source) {
-            source.setData({
-              type: 'Feature',
-              properties: {},
-              geometry: {
-                type: 'LineString',
-                coordinates: currentCoords,
-              },
-            });
-          }
-          requestAnimationFrame(animateLineDraw);
-        } else {
-          // Drawing complete. Kick off flow animation!
-          animateFlow();
-        }
-      }
-
-      // Add flowing dash offset animation to completed route
-      let dashOffset = 0;
-      function animateFlow() {
-        if (!mapRef.current) return;
-        dashOffset = (dashOffset - 0.25) % 40;
-        try {
-          if (map.getLayer('completed-route-layer')) {
-            map.setPaintProperty('completed-route-layer', 'line-dasharray', [6, 6, Math.abs(dashOffset) / 4]);
-          }
-        } catch (e) {
-          // Prevent crash if map was unmounted during animation
-        }
-        flowAnimFrameId = requestAnimationFrame(animateFlow);
-      }
-
-      // Start the drawing sequence
-      animateLineDraw();
     });
 
-    // 2. Render Markers
+    // 2. Render Markers with Soft Pulsing Aura Exclusively on Live City
     stops.forEach((stop) => {
-      // Create HTML element for custom styled markers
       const markerEl = document.createElement('div');
       markerEl.className = 'relative flex items-center justify-center cursor-pointer group';
       
-      let markerDotClass = '';
-      let markerOuterRing = '';
-
       if (stop.status === 'completed') {
-        // Lighter green marker
-        markerDotClass = 'bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.6)]';
-        markerOuterRing = 'border-emerald-400/40';
+        // Static clean emerald marker
         markerEl.innerHTML = `
-          <div class="w-8 h-8 rounded-full border flex items-center justify-center transition-all duration-300 ${markerOuterRing} bg-zinc-900/80 group-hover:scale-110">
-            <div class="w-3 h-3 rounded-full ${markerDotClass}"></div>
+          <div class="w-6 h-6 rounded-full border border-emerald-500/30 flex items-center justify-center bg-zinc-950/90 shadow transition-transform duration-200 group-hover:scale-110">
+            <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
           </div>
         `;
       } else if (stop.status === 'current') {
-        // Lighter purple pulsing marker
-        markerDotClass = 'bg-purple-400 shadow-[0_0_15px_rgba(192,132,252,0.8)]';
-        markerOuterRing = 'border-purple-400/60';
+        // Soft pulsing glow aura exclusively on the LIVE city marker
         markerEl.innerHTML = `
-          <div class="w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${markerOuterRing} bg-purple-950/10 marker-pulse-purple">
-            <div class="w-4 h-4 rounded-full ${markerDotClass}"></div>
+          <div class="relative flex items-center justify-center">
+            <div class="w-8 h-8 rounded-full border-2 border-purple-400/80 flex items-center justify-center bg-purple-950/40 live-marker-aura">
+              <div class="w-3 h-3 rounded-full bg-purple-300 shadow-[0_0_8px_rgba(216,180,254,1)]"></div>
+            </div>
           </div>
         `;
       } else {
-        // Lighter gray marker
-        markerDotClass = 'bg-zinc-300 shadow-[0_0_5px_rgba(209,213,219,0.4)]';
-        markerOuterRing = 'border-zinc-600/50';
+        // Static clean slate/gray marker
         markerEl.innerHTML = `
-          <div class="w-8 h-8 rounded-full border flex items-center justify-center transition-all duration-300 ${markerOuterRing} bg-zinc-800/60 group-hover:scale-110">
-            <div class="w-2.5 h-2.5 rounded-full ${markerDotClass}"></div>
+          <div class="w-5 h-5 rounded-full border border-zinc-700/60 flex items-center justify-center bg-zinc-900/80 shadow transition-transform duration-200 group-hover:scale-110">
+            <div class="w-1.5 h-1.5 rounded-full bg-zinc-400"></div>
           </div>
         `;
       }
 
-      // Add tooltip/popover label on hover
+      // Tooltip label on hover
       const tooltip = document.createElement('div');
       tooltip.className = 'absolute bottom-full mb-2 hidden group-hover:block bg-zinc-950/95 border border-zinc-800 text-zinc-100 text-xs px-2.5 py-1 rounded shadow-xl whitespace-nowrap z-50 pointer-events-none transition-opacity duration-200';
       tooltip.innerHTML = `<span class="font-medium">${stop.city}</span> <span class="text-zinc-400">(${stop.venue})</span>`;
@@ -262,9 +240,6 @@ export const MapContainer: React.FC<MapContainerProps> = ({
     });
 
     return () => {
-      if (flowAnimFrameId) {
-        cancelAnimationFrame(flowAnimFrameId);
-      }
       markersRef.current.forEach((marker) => marker.remove());
       markersRef.current = [];
       if (userMarkerRef.current) {
@@ -406,9 +381,48 @@ export const MapContainer: React.FC<MapContainerProps> = ({
     <div className="relative w-full h-full overflow-hidden">
       {/* Map Container Element */}
       <div ref={mapContainerRef} className="w-full h-full bg-zinc-950" />
-      
+
       {/* Decorative dark vignettes */}
       <div className="absolute inset-0 pointer-events-none border border-zinc-900/50 shadow-[inset_0_0_100px_rgba(0,0,0,0.8)]" />
+
+      {/* Collapsible Map Legend (Bottom-Left Info Button & Popover) */}
+      <div className="absolute bottom-5 left-5 z-20">
+        <div className="relative group">
+          <button
+            onClick={() => setShowLegend(!showLegend)}
+            className="w-8 h-8 rounded-full bg-zinc-950/80 hover:bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-zinc-200 flex items-center justify-center transition-colors backdrop-blur-md cursor-pointer shadow-lg"
+            title="Map legend"
+            aria-label="Toggle map legend"
+          >
+            <Info className="w-4 h-4" />
+          </button>
+
+          {/* Popover on hover or when toggled */}
+          <div
+            className={`absolute bottom-full left-0 mb-2 w-40 bg-zinc-950/95 border border-zinc-800 rounded-xl p-3 shadow-2xl backdrop-blur-xl transition-all duration-200 pointer-events-auto ${
+              showLegend
+                ? 'opacity-100 scale-100'
+                : 'opacity-0 scale-95 pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto'
+            }`}
+          >
+            <p className="text-[10px] font-semibold text-zinc-400 uppercase tracking-wider mb-2">Map Legend</p>
+            <div className="space-y-2 text-xs">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                <span className="text-[11px] text-zinc-300">Completed</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-purple-400 shadow-[0_0_6px_rgba(168,85,247,0.8)]" />
+                <span className="text-[11px] text-purple-300 font-medium">Live show</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-zinc-500" />
+                <span className="text-[11px] text-zinc-400">Upcoming</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
