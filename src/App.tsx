@@ -5,7 +5,6 @@ import tourDataRaw from './data/tourData.json';
 import type { TourData, TourStop, UserTravelPreferences } from './types/tour';
 import { MapContainer } from './components/MapContainer';
 import { Timeline } from './components/Timeline';
-import { NextStopCard } from './components/NextStopCard';
 import { SidePanel } from './components/SidePanel';
 import {
   getUserLocation,
@@ -193,13 +192,6 @@ function App() {
           onPrefsChange={handlePrefsChange}
         />
 
-        {/* Next Stop Floating HUD Card */}
-        <NextStopCard
-          stops={tourStops}
-          userPrefs={userPrefs}
-          onStopSelect={(stop) => setSelectedStop(stop)}
-        />
-
         {/* Map Visualization */}
         <div className="w-full h-full relative z-0">
           <MapContainer
@@ -213,9 +205,11 @@ function App() {
         {/* Side Panel Details */}
         <SidePanel
           stop={selectedStop}
+          stops={tourStops}
           userLocation={userLocation}
           userPrefs={userPrefs}
           onPrefsChange={handlePrefsChange}
+          onStopSelect={(stop) => setSelectedStop(stop)}
           onClose={() => setSelectedStop(null)}
         />
       </div>
